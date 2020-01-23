@@ -17,6 +17,14 @@
             dark
           >
             <v-toolbar-title>{{texts.toolbar}}</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-progress-circular
+              v-show="isLoading"
+              indeterminate
+              color="white"
+              width="2"
+            >
+            </v-progress-circular>
           </v-toolbar>
 
           <v-card-text>
@@ -89,6 +97,7 @@ export default {
   name: 'Login',
   data: () => ({
     isLogin: true,
+    isLoading: false,
     user: {
       name: '',
       email: '',
@@ -158,16 +167,19 @@ export default {
   },
   methods: {
 
-    log () {
-      console.log('Vuelidate', this.$v)
-    },
-
     async submit () {
-      console.log('User: ', this.user)
-
-      const authData = await AuthService.login(this.user)
-
-      console.log('authData ;', authData)
+      this.isLoading = true
+      try {
+        await new Promise(resolve => setTimeout(resolve, 3000))
+        const authData = this.isLogin
+          ? await AuthService.login(this.user)
+          : await AuthService.signup(this.user)
+        console.log('authData ;', authData)
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.isLoading = false
+      }
     }
   }
 }
