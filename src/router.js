@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import authRoutes from '@/modules/auth/router'
+import dashBoardRoutes from '@/modules/dashboard/router'
 Vue.use(Router)
 
 export default new Router({
@@ -8,7 +9,11 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     ...authRoutes,
-    { path: '', redirect: '/login' }
+    ...dashBoardRoutes,
+    {
+      path: '',
+      redirect: '/login'
+    }
 
   ]
 })

@@ -84,6 +84,21 @@
               @click="submit"
             >{{texts.toolbar}}</v-btn>
           </v-card-actions>
+          <v-snackbar
+            v-model="showSnackBar"
+            top
+          >
+            {{error}}
+            <v-btn
+              color="pink"
+              text
+              icon
+              @click="showSnackBar = false"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+
+          </v-snackbar>
         </v-card>
       </v-flex>
     </v-layout>
@@ -92,12 +107,15 @@
 <script>
 import { required, email, minLength } from 'vuelidate/lib/validators'
 import AuthService from './../services/auth-service'
+import { formatError } from '@/utils'
 
 export default {
   name: 'Login',
   data: () => ({
+    error: undefined,
     isLogin: true,
     isLoading: false,
+    showSnackBar: false,
     user: {
       name: '',
       email: '',
@@ -170,13 +188,13 @@ export default {
     async submit () {
       this.isLoading = true
       try {
-        await new Promise(resolve => setTimeout(resolve, 3000))
-        const authData = this.isLogin
+        this.isLogin
           ? await AuthService.login(this.user)
           : await AuthService.signup(this.user)
-        console.log('authData ;', authData)
+        this.$router.push(this.$route.query.redirect || '/dashboard')
       } catch (error) {
-        console.log(error)
+        this.error = formatError(error.message)
+        this.showSnackBar = true
       } finally {
         this.isLoading = false
       }
