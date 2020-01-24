@@ -1,4 +1,5 @@
 const errorHandler = (err, vm, info) => {
+  console.log(err)
   console.log('Vue error HANDLER: ', err, info)
   const jwtErrors = ['jwt malformed', 'jwt expired', 'jwt not active', 'invalid token']
 
