@@ -1,3 +1,12 @@
 <template>
-  <h1>Bem vindo DashBoard</h1>
+  <AppLayout />
 </template>
+<script>
+import AppLayout from './../components/AppLayout'
+export default {
+  name: 'DashBoard',
+  components: {
+    AppLayout
+  }
+}
+</script>
