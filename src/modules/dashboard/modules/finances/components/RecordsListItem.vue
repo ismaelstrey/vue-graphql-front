@@ -23,21 +23,18 @@
 
 <script>
 import formatCurrencyMixin from '@/mixins/format-currency'
+import amountColorMixins from './../mixins/amount-color'
 
 export default {
   name: 'RecordsListItem',
   mixins: [
-    formatCurrencyMixin
+    formatCurrencyMixin,
+    amountColorMixins
   ],
   props: {
     record: Object
   },
   methods: {
-    amountColor (amount) {
-      return amount < 0
-        ? 'error--text text--lighten-1'
-        : 'primary--text text--ligthen-1'
-    },
 
     recordIcon (type) {
       return type === 'CREDIT' ? 'mdi-arrow-up-circle-outline' : 'mdi-arrow-down-bold-circle-outline'
