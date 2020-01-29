@@ -1,11 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import authRoutes from '@/modules/auth/router'
-import dashBoardRoutes from '@/modules/dashboard/router'
+
 import {
   AUTH_TOKEN
 } from '@/plugins/apollo'
 import AuthService from '@/modules/auth/services/auth-service'
+import authRoutes from '@/modules/auth/router'
+import dashboardRoutes from '@/modules/dashboard/router'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -13,17 +15,16 @@ const router = new Router({
   base: process.env.BASE_URL,
   routes: [
     ...authRoutes,
-    ...dashBoardRoutes,
+    ...dashboardRoutes,
     {
       path: '',
       redirect: '/login'
     }
-
   ]
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (to.matched.some(route => route.meta.requiriesAuth)) {
+  if (to.matched.some(route => route.meta.requiresAuth)) {
     const token = window.localStorage.getItem(AUTH_TOKEN)
     const loginRoute = {
       path: '/login',
@@ -34,7 +35,7 @@ router.beforeEach(async (to, from, next) => {
     if (token) {
       try {
         await AuthService.user({
-          fetchPolice: 'network-only'
+          fetchPolicy: 'network-only'
         })
         return next()
       } catch (error) {
@@ -46,4 +47,5 @@ router.beforeEach(async (to, from, next) => {
   }
   next()
 })
+
 export default router

@@ -56,6 +56,7 @@ export default {
   methods: {
     emit () {
       this.$emit('month', this.date.format(this.format))
+      // console.log('Emit')
     },
     increment () {
       this.date = this.date.clone().add(1, 'month')
@@ -67,6 +68,7 @@ export default {
     },
     setCurrentMonth () {
       this.date = this.month ? moment(this.month, this.format) : moment()
+      // console.log('SetCurrentAmount')
     }
   }
 }

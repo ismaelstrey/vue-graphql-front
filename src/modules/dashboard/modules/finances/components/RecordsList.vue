@@ -1,5 +1,6 @@
 <template>
   <div>
+    <TotalBalance class="mb-2" />
     <ToolbarByMonth
       class="mb-4"
       format="MM-YYYY"
@@ -55,22 +56,25 @@
 </template>
 
 <script>
-import momment from 'moment'
-import RecordsListItem from './RecordsListItem'
-import ToolbarByMonth from './ToolbarByMonth'
-import RecordsService from './../services/records-service'
-import formatCurrencyMixin from '@/mixins/format-currency'
-import amountColorMixins from './../mixins/amount-color'
+import moment from 'moment'
 import { groupBy } from '@/utils'
+import amountColorMixin from './../mixins/amount-color'
+import formatCurrencyMixin from '@/mixins/format-currency'
+import RecordsListItem from './RecordsListItem.vue'
+import RecordsService from './../services/records-service'
+import ToolbarByMonth from './ToolbarByMonth.vue'
+import TotalBalance from './TotalBalance'
+
 export default {
   name: 'RecordsList',
   components: {
     RecordsListItem,
-    ToolbarByMonth
+    ToolbarByMonth,
+    TotalBalance
   },
   mixins: [
-    formatCurrencyMixin,
-    amountColorMixins
+    amountColorMixin,
+    formatCurrencyMixin
   ],
   data: () => ({
     records: []
@@ -78,33 +82,33 @@ export default {
   computed: {
     mappedRecords () {
       return groupBy(this.records, 'date', (record, dateKey) => {
-        return momment(record[dateKey]).format('DD/MM/YYYY')
+        return moment(record[dateKey]).format('DD/MM/YYYY')
       })
-    },
-    totalAmount () {
-      return this.records.reduce((sum, record) => sum + record.amount, 0)
     },
     mappedRecordsLength () {
       return Object.keys(this.mappedRecords).length
     },
+    totalAmount () {
+      return this.records.reduce((sum, record) => sum + record.amount, 0)
+    },
     toolbarColor () {
       return this.totalAmount < 0 ? 'error' : 'primary'
     }
-
   },
   methods: {
-    showDivider (index, object) {
-      return index < Object.keys(object).length - 1
-    },
-    async setRecords (month) {
-      this.records = await RecordsService.records({ month })
-    },
     changeMonth (month) {
       this.$router.push({
         path: this.$route.path,
         query: { month }
       })
       this.setRecords(month)
+      console.log(this.setRecords(month))
+    },
+    async setRecords (month) {
+      this.records = await RecordsService.records({ month })
+    },
+    showDivider (index, object) {
+      return index < Object.keys(object).length - 1
     }
   }
 }

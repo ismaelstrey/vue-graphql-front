@@ -1,9 +1,7 @@
 const errorHandler = (err, vm, info) => {
-  console.log(err)
-  console.log('Vue error HANDLER: ', err, info)
+  // console.log('Vue [error handler]: ', err, info)
   const jwtErrors = ['jwt malformed', 'jwt expired', 'jwt not active', 'invalid token']
-
-  if (jwtErrors.some(jwtError => err.message.include(jwtError))) {
+  if (jwtErrors.some(jwtError => err.message.includes(jwtError))) {
     vm.$router.push({
       path: '/login',
       query: {
@@ -16,18 +14,6 @@ const errorHandler = (err, vm, info) => {
 const formatError = message => {
   const messageSplit = message.split(':')
   return messageSplit[messageSplit.length - 1].trim()
-}
-const currencyFormatter = ({
-  locale,
-  currency
-} = {
-  locale: 'pt-BR',
-  currency: 'BRL'
-}) => {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency
-  })
 }
 
 const groupBy = (array, key, makeCurrentKey) => {
@@ -42,9 +28,23 @@ const groupBy = (array, key, makeCurrentKey) => {
     }
   }, {})
 }
+
+const currencyFormatter = ({
+  locale,
+  currency
+} = {
+  locale: 'pt-BR',
+  currency: 'BRL'
+}) => {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency
+  })
+}
+
 export {
   currencyFormatter,
   groupBy,
-  formatError,
-  errorHandler
+  errorHandler,
+  formatError
 }

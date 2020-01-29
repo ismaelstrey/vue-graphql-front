@@ -77,7 +77,9 @@ export default {
   },
   data: () => ({
     items: [
-      { title: 'Home', icon: 'mdi-home-circle', url: '/dashboard', exact: true }
+      { title: 'Home', icon: 'mdi-home-circle', url: '/dashboard', exact: true },
+      { title: 'Receita', icon: 'mdi-plus-circle', url: '/dashboard/records/add?type=credit', exact: true },
+      { title: 'Despesa', icon: 'mdi-minus-circle', url: '/dashboard/records/add?type=debit', exact: true }
     ],
     mini: false,
     user: {}
