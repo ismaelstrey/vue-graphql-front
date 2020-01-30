@@ -64,6 +64,8 @@ import RecordsListItem from './RecordsListItem.vue'
 import RecordsService from './../services/records-service'
 import ToolbarByMonth from './ToolbarByMonth.vue'
 import TotalBalance from './TotalBalance'
+import { Subject } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 
 export default {
   name: 'RecordsList',
@@ -77,12 +79,13 @@ export default {
     formatCurrencyMixin
   ],
   data: () => ({
-    records: []
+    records: [],
+    monthSubject$: new Subject()
   }),
   computed: {
     mappedRecords () {
       return groupBy(this.records, 'date', (record, dateKey) => {
-        return moment(record[dateKey]).format('DD/MM/YYYY')
+        return moment(record[dateKey].substr(0, 10)).format('DD/MM/YYYY')
       })
     },
     mappedRecordsLength () {
@@ -95,18 +98,24 @@ export default {
       return this.totalAmount < 0 ? 'error' : 'primary'
     }
   },
+  created () {
+    this.setRecords()
+  },
   methods: {
     changeMonth (month) {
       this.$router.push({
         path: this.$route.path,
         query: { month }
       })
-      this.setRecords(month)
+      this.monthSubject$.next({ month })
       // console.log(this.setRecords(month))
     },
     setRecords (month) {
-      RecordsService.records({ month })
-        .subscribe(records => (this.records = records))
+      console.log('Sibscribing...')
+      this.monthSubject$
+        .pipe(
+          mergeMap(variables => RecordsService.records(variables))
+        ).subscribe(records => (this.records = records))
     },
     showDivider (index, object) {
       return index < Object.keys(object).length - 1

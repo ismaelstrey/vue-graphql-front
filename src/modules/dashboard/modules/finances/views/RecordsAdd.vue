@@ -71,7 +71,22 @@
                 item-text="description"
                 item-value="id"
                 v-model="record.accountId"
-              ></v-select>
+              >
+                <v-list-item
+                  slot="prepend-item"
+                  rippl
+                  @click="add('account')"
+                >
+                  <v-list-item-action>
+                    <v-icon :color="color">mdi-bank-plus</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-title>Nova conta</v-list-item-title>
+                </v-list-item>
+                <v-divider
+                  slot="prepend-item"
+                  class="mt-2"
+                ></v-divider>
+              </v-select>
               <v-select
                 name="category"
                 label="Categoria"
@@ -80,7 +95,22 @@
                 item-text="description"
                 item-value="id"
                 v-model="record.categoryId"
-              ></v-select>
+              >
+                <v-list-item
+                  slot="prepend-item"
+                  rippl
+                  @click="add('category')"
+                >
+                  <v-list-item-action>
+                    <v-icon :color="color">mdi-playlist-plus</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-title>Nova categoria</v-list-item-title>
+                </v-list-item>
+                <v-divider
+                  slot="prepend-item"
+                  class="mt-2"
+                ></v-divider>
+              </v-select>
               <v-text-field
                 name="decription"
                 label="Descrição"
@@ -153,6 +183,21 @@
         >
           <v-icon>mdi-check</v-icon>
         </v-btn>
+
+        <v-dialog
+          v-model="showAccountCategoryDialog"
+          max-width="350px"
+          transition="scale-transition"
+          origin="top"
+        >
+
+          <AccountCategoryAdd
+            v-if="showAccountCategoryDialog"
+            :entity="entity"
+            @close="showAccountCategoryDialog = false"
+          />
+
+        </v-dialog>
       </v-flex>
     </v-layout>
   </v-container>
@@ -162,6 +207,7 @@ import { mapActions } from 'vuex'
 import { decimal, minLength, required } from 'vuelidate/lib/validators'
 import moment from 'moment'
 import NumericDisplay from './../components/NumericDisplay'
+import AccountCategoryAdd from './../components/AccountCategoryAdd'
 import AccountsServices from './../services/accounts-service'
 import CategoriesService from './../services/categories-service'
 import RecordsService from './../services/records-service'
@@ -169,13 +215,15 @@ import RecordsService from './../services/records-service'
 export default {
   name: 'RecordsAdd',
   components: {
-    NumericDisplay
+    NumericDisplay,
+    AccountCategoryAdd
   },
   data () {
     return {
       accounts: [],
       categories: [],
       dateDialogValue: moment().format('YYYY-MM-DD'),
+      entity: '',
       record: {
         type: this.$route.query.type.toUpperCase(),
         amount: 0,
@@ -186,6 +234,7 @@ export default {
         tags: '',
         note: ''
       },
+      showAccountCategoryDialog: false,
       showDateDialog: false,
       showTagsInput: false,
       showNoteInput: false
@@ -233,6 +282,10 @@ export default {
   },
   methods: {
     ...mapActions(['setTitle']),
+    add (entity) {
+      this.showAccountCategoryDialog = true
+      this.entity = entity
+    },
     cancelDateDialog () {
       this.showDateDialog = false
       this.dateDialogValue = this.record.date
@@ -255,8 +308,7 @@ export default {
     },
     async submit () {
       try {
-        const record = await RecordsService.createRecord(this.record)
-        console.log('Record: ', record)
+        await RecordsService.createRecord(this.record)
         this.$router.push('/dashboard/records')
       } catch (error) {
         console.log('Error ao submeter o formulario', error)
