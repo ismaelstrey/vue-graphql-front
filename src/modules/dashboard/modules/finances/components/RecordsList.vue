@@ -102,10 +102,11 @@ export default {
         query: { month }
       })
       this.setRecords(month)
-      console.log(this.setRecords(month))
+      // console.log(this.setRecords(month))
     },
-    async setRecords (month) {
-      this.records = await RecordsService.records({ month })
+    setRecords (month) {
+      RecordsService.records({ month })
+        .subscribe(records => (this.records = records))
     },
     showDivider (index, object) {
       return index < Object.keys(object).length - 1
